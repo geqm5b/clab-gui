@@ -1,6 +1,5 @@
 services:
   api:
-    # MÉTODO A: Le decimos a Compose CÓMO CONSTRUIR
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -9,10 +8,10 @@ services:
       - "8080:8080"
     
     volumes:
-      # Monta tu código local
+      # Código local
       - .:/app
-      # Monta los labs
+      # Labs
       - /opt/containerlab/labs:/opt/containerlab/labs:ro
 
-    # LA CORRECCIÓN: Corre 'go mod tidy' en CADA arranque
+    # Corre 'go mod tidy'
     command: sh -c "go mod tidy && /go/bin/air"

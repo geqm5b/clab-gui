@@ -1,0 +1,28 @@
+# .air.toml
+# Configuración global
+root = "."
+tmp_dir = "tmp" # Usamos el 'tmp' que ya tenías
+
+[build]
+# ESTA ES LA LÍNEA MÁS IMPORTANTE
+# Le dice a 'air' dónde está tu main.go
+cmd = "go build -o ./tmp/main ./cmd/api"
+
+# El binario que 'air' debe ejecutar
+bin = "./tmp/main"
+
+# Qué archivos/carpetas mirar
+include_ext = ["go", "toml"]
+
+# Qué carpetas ignorar (¡Importante!)
+# No reinicies el backend si solo cambio el frontend
+exclude_dir = ["tmp", "vendor", "web"]
+
+[log]
+# Logs con timestamp
+time = true
+
+[misc]
+# Limpiar el binario 'tmp/main' al salir
+clean_on_exit = true
+# Recargar

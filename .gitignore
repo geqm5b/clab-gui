@@ -1,0 +1,22 @@
+Binarios y Build
+
+main
+*.exe
+*.test
+tmp/
+
+Logs
+
+*.log
+
+Editor y Sistema
+
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+Containerlab
+
+clab-/
+.clab-.yml.bak
