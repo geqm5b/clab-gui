@@ -1,7 +1,14 @@
+# Versión de Go 
 FROM golang:1.25-alpine
-
+# 2. Dependencias
+RUN apk add --no-cache \
+    bash \
+    curl \
+    iproute2
 # Instala Air (el watcher)
 RUN go install github.com/air-verse/air@latest
-
+# Instalar Containerlab
+RUN bash -c "curl -sL https://get.containerlab.dev | bash"
 # Fija el directorio de trabajo
 WORKDIR /app
+

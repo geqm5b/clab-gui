@@ -23,7 +23,8 @@ func main() {
 	// --- Servir el Backend (API) ---
 	api := router.Group("/api")
 	{
-		api.GET("/labs", handlers.GetLabsHandler)
+		api.GET("/getLabs", handlers.GetLabsHandler)
+		api.POST("/deploylabs", handlers.DeployLabHandler)
 
 	}
 

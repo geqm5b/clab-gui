@@ -3,15 +3,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    
     ports:
       - "8080:8080"
-    
     volumes:
       # Código local
       - .:/app
-      # Labs
-      - /opt/containerlab/labs:/opt/containerlab/labs:ro
-
+      # Montar socket de docker
+      - /var/run/docker.sock:/var/run/docker.sock
     # Corre 'go mod tidy'
     command: sh -c "go mod tidy && /go/bin/air"
+    privileged: true
+    network_mode: "host"
+

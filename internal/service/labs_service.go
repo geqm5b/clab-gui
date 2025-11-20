@@ -4,11 +4,12 @@ import (
 	"log"
 	"os"
 	"strings"
+    "os/exec"
+    "path/filepath"
+	"fmt"
 )
 
 // ---La Estructura de Datos ---
-//
-// Devolvemos una lista de 'Lab', no solo una lista de 'string'.
 type Lab struct {
 	Name   string `json:"name"`
 	Status string `json:"status"`
@@ -18,26 +19,35 @@ type Lab struct {
 //
 // Recibe el path de los labs como argumento y retorna una lista con los labs,
 // encontrados.
-func GetLabs(path string) ([]Lab, error) {
-	files, err := os.ReadDir(path)
-
+func GetLabs(basePath string) ([]Lab, error) {
+	files, err := os.ReadDir(basePath)
 	if err != nil {
-		log.Printf("Error al leer el directorio %s: %v", path, err)
+		log.Printf("Error al leer el directorio %s: %v", basePath, err)
 		return nil, err
 	}
-
 	var labs []Lab
-
 	for _, file := range files {
 		if strings.HasSuffix(file.Name(), ".clab.yml") {
 			labs = append(labs, Lab{Name: file.Name()})
 		}
 
 	}
-
 	return labs, nil
 }
-
-//func DeployLab(path string) ([]Lab, error) {
+// --- Funcion desplegar Labs ---
 //
-//}
+// Recibe el path de los labs como argumento y el nombre del lab.
+func DeployLab(labName string, basePath string) (error) {
+	fullPath := filepath.Join(basePath, labName)
+	// revisar existencia del lab
+	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+        return fmt.Errorf("el archivo %s no existe", labName)
+    }
+	// Preparar el comando
+	cmd := exec.Command("containerlab", "deploy", "-t", fullPath)
+	// Configurar salida para ver logs en consola
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run() 
+}
