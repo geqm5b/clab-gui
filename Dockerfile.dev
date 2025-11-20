@@ -11,4 +11,3 @@ RUN go install github.com/air-verse/air@latest
 RUN bash -c "curl -sL https://get.containerlab.dev | bash"
 # Fija el directorio de trabajo
 WORKDIR /app
-

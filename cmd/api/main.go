@@ -11,11 +11,11 @@ import (
 func main() {
 	router := gin.Default()
 
-	// --- Servir el Frontend (el "sitio" en web/) ---
-	// 1. Sirve los archivos estáticos (app.js) desde la ruta /static
+	// --- Servir el Frontend---
+	//  Sirve los archivos estáticos (app.js) desde la ruta /static
 	router.Static("/static", "./web")
 
-	// 2. Sirve el index.html en la raíz "/"
+	//  Sirve el index.html en la raíz "/"
 	router.GET("/", func(c *gin.Context) {
 		c.File("./web/index.html")
 	})
@@ -24,8 +24,8 @@ func main() {
 	api := router.Group("/api")
 	{
 		api.GET("/getLabs", handlers.GetLabsHandler)
-		api.POST("/deploylabs", handlers.DeployLabHandler)
-
+		api.POST("/deployLab", handlers.DeployLabHandler)
+		api.POST("/destroyLab", handlers.DestroyLabHandler)
 	}
 
 	log.Println("Servidor corriendo en http://localhost:8080")

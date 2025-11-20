@@ -11,7 +11,6 @@ type LabActionRequest struct {
     Name string `json:"name"`
 }
 
-
 func GetLabsHandler(c *gin.Context) {
 	// path de los laboratorios
 	const labsPath = "./clab-labs"
@@ -34,13 +33,33 @@ func DeployLabHandler(c *gin.Context) {
 	}
 
 	if err := service.DeployLab(request.Name, labsPath); err != nil {
-        // Si falla, avisamos al cliente con un 500 y el mensaje real
+        // Si falla, devolvemos un error 500 y el error textual
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo el deploy: " + err.Error()})
         return
     }
 
 	c.JSON(http.StatusOK, gin.H{
         "message": "Desplegando " + request.Name,
+        "status": "ok",
+    })
+}
+
+func DestroyLabHandler(c *gin.Context) {
+	var request LabActionRequest
+	const labsPath = "./clab-labs"
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(400, gin.H{"error": "JSON inválido"})
+		return
+	}
+
+	if err := service.DestroyLab(request.Name, labsPath); err != nil {
+        // Si falla, devolvemos un error 500 y el error textual
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo al destruir: " + err.Error()})
+        return
+    }
+
+	c.JSON(http.StatusOK, gin.H{
+        "message": "Eliminando " + request.Name,
         "status": "ok",
     })
 }

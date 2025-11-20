@@ -14,4 +14,4 @@ services:
     command: sh -c "go mod tidy && /go/bin/air"
     privileged: true
     network_mode: "host"
-
+    pid: "host"
