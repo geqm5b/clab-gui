@@ -1,0 +1,44 @@
+FROM debian:stable-slim
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+WORKDIR /root
+
+# Instalación de Paquetes
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    bind9-host \
+    ca-certificates \
+    fonts-dejavu-core \
+    #ELIMINAR FIREFOX EN LA VERSION FINAL, SOLO SE USO PARA TEST
+    firefox-esr \
+    cifs-utils \
+    claws-mail \
+    curl \
+    dillo \
+    elinks \
+    iproute2 \
+    iptables \
+    iputils-ping \
+    isc-dhcp-client \
+    less \
+    nano \
+    net-tools \
+    netcat-traditional \
+    openssh-client \
+    smbclient \
+    tcpdump \
+    telnet \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/cache/apt/* \
+    && rm -rf /usr/share/doc/* \
+    && rm -rf /usr/share/man/*
+
+# 2. Configuración de Hooks DHCP 
+RUN echo '#!/bin/bash' > /etc/dhcp/dhclient-exit-hooks.d/mv \
+    && echo 'ORIGEN=$(ls -t /etc/resolv.conf* | head -n1)' >> /etc/dhcp/dhclient-exit-hooks.d/mv \
+    && echo 'cp "$ORIGEN" /etc/resolv.conf' >> /etc/dhcp/dhclient-exit-hooks.d/mv \
+    && chmod +x /etc/dhcp/dhclient-exit-hooks.d/mv \
+    && cp /etc/dhcp/dhclient-exit-hooks.d/mv /etc/dhcp/dhclient-enter-hooks.d/mv
+    
+CMD ["/bin/bash"]

@@ -9,7 +9,7 @@ import (
 	"fmt"
 )
 
-// ---La Estructura de Datos ---
+// ---Estructura de Datos ---
 type Lab struct {
 	Name   string `json:"name"`
 	Status string `json:"status"`
@@ -33,7 +33,7 @@ func GetLabs(basePath string) ([]Lab, error) {
 	}
 	return labs, nil
 }
-// --- Funcion desplegar Labs ---
+// --- Funcion desplegar Lab ---
 //
 // Recibe el path de los labs como argumento y el nombre del lab.
 func DeployLab(labName string, basePath string) (error) {
@@ -50,9 +50,8 @@ func DeployLab(labName string, basePath string) (error) {
 
 	return cmd.Run() 
 }
-
-
-// DEPLOY Y DESTROY SON FUNCIONES MUY SIMILARES, VER SI SE PUEDE HACER UNA SOLA FUNC,
+// --- Funcion destruir Lab ---
+// DEPLOY Y DESTROY SON FUNCIONES MUY SIMILARES, VER SI SE PUEDE HACER UNA SOLA FUNCION,
 //RECIBIENDO LA ORDEN POR PARAMETRO Y USANDO UN CASE/SWITCH PARA ELEGIR LA ACCION.
 func DestroyLab(labName string, basePath string) (error) {
 	fullPath := filepath.Join(basePath, labName)

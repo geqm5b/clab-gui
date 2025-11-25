@@ -3,19 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Containerlab GUI</title>
+    <title>Containerlab Manager</title>
+    <style>
+        /* --- ESTILOS GENERALES --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        /* --- GRID SYSTEM --- */
+        #lab-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- TARJETAS --- */
+        .lab-card {
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .lab-name {
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            word-break: break-word;
+            color: #24292e;
+            text-align: center; 
+        }
+
+        /* --- BOTONES BASE --- */
+        .btn-action {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-action:disabled {
+            background-color: #959da5 !important;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        /* Botón DEPLOY (Azul) */
+        .btn-deploy {
+            background-color: #0366d6;
+            margin-bottom: 10px; 
+        }
+        .btn-deploy:hover { background-color: #005cc5; }
+
+        /* Botón DESTROY (Rojo) */
+        .btn-destroy {
+            background-color: #dc3545;
+        }
+        .btn-destroy:hover { background-color: #c82333; }
+
+    </style>
 </head>
 <body>
-    <h1>Mis Laboratorios</h1>
-    
-    <!-- 1. Un 'ul' (lista) vacío con un ID. -->
-    <!-- Aquí es donde nuestro JavaScript pondrá los labs. -->
-    <ul id="lista-labs">
-        <li>Cargando...</li>
-    </ul>
 
-    <!-- 2. Cargamos el archivo JavaScript. -->
-    <!-- Tu 'main.go' sabe que '/static/app.js' apunta a 'web/app.js' -->
+    <h1>Panel de Control Containerlab</h1>
+
+    <div id="lab-grid">
+        <p style="text-align:center; grid-column: 1/-1;">Cargando inventario...</p>
+    </div>
+
     <script src="/static/app.js"></script>
 </body>
 </html>
