@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 
-// --- 3. LÓGICA: DESPLEGAR (Deploy) ---
+// --- 3. LÓGICA: DESPLEGAR ---
 async function deployLab(labName, btn) {
     const originalText = btn.textContent;
     btn.disabled = true;
@@ -99,7 +99,7 @@ async function deployLab(labName, btn) {
 }
 
 
-// --- 4. LÓGICA: DESTRUIR (Destroy) ---
+// --- 4. LÓGICA: DESTRUIR ---
 async function destroyLab(labName, btn) {
     const originalText = btn.textContent;
     btn.disabled = true;

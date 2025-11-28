@@ -1,0 +1,107 @@
+name: dns
+
+# Definición de la topologica
+topology:
+  # Eliminar el network mode que da clab por defecto
+  kinds:
+    linux:
+      network-mode: none
+  # Definición nodos    
+  nodes:
+    # Definición bridges
+    lan1:
+      kind: bridge
+    lan2:
+      kind: bridge
+    man1:
+      kind: bridge
+    # Definición host merlo
+    merlo:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname merlo
+        - ip link set eth1 down
+        - ip link set eth1 name lan1
+        - ip link set lan1 up
+    # Definición host la-toma
+    la-toma:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname la-toma
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+    # Definición server potrero
+    potrero:
+      kind: linux
+      image: netoslab-dns:latest
+      exec:
+        - hostname potrero
+        #lan1 interface
+        - ip link set eth1 down
+        - ip link set eth1 name lan1
+        - ip link set lan1 up
+        #lan2 interface
+        - ip link set eth2 down
+        - ip link set eth2 name lan2
+        - ip link set lan2 up
+        #ppp1 interface
+        - ip link set eth3 down
+        - ip link set eth3 name ppp1
+        - ip link set ppp1 up
+    # Definición server la-florida
+    la-florida:
+      kind: linux
+      image: netoslab-dns:latest
+      exec:
+        - hostname la-florida
+        #ppp1 interface
+        - ip link set eth1 down
+        - ip link set eth1 name ppp1
+        - ip link set ppp1 up 
+        #man1 interface
+        - ip link set eth2 down
+        - ip link set eth2 name man1
+        - ip link set man1 up
+    # Definición server nogoli
+    nogoli:
+      kind: linux
+      image: netoslab-dns:latest
+      exec:
+        - hostname nogoli
+        - ip link set eth1 down
+        - ip link set eth1 name man1
+        - ip link set man1 up
+    # Definición server desaguadero
+    desaguadero:
+      kind: linux
+      image: netoslab-dns:latest
+      exec:
+        - hostname desaguadero
+        - ip link set eth1 down
+        - ip link set eth1 name man1
+        - ip link set man1 up
+  # Definicion de enlaces
+  links:
+    # Lan1
+    - endpoints: ["merlo:eth1", "lan1:lan1-eth1"]
+    - endpoints: ["potrero:eth1", "lan1:lan1-eth2"]
+    # Lan2
+    - endpoints: ["la-toma:eth1", "lan2:lan2-eth1"]
+    - endpoints: ["potrero:eth2", "lan2:lan2-eth2"]
+    # pp1
+    - endpoints: ["potrero:eth3", "la-florida:eth1"]
+    # man1
+    - endpoints: ["la-florida:eth2", "man1:man1-eth1"]
+    - endpoints: ["nogoli:eth1", "man1:man1-eth2"]
+    - endpoints: ["desaguadero:eth1", "man1:man1-eth3"]

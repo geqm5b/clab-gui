@@ -1,0 +1,51 @@
+name: dns
+
+topology:
+  kinds:
+    linux:
+      network-mode: none
+
+  nodes:
+    lan2:
+      kind: bridge
+
+    la-toma:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname la-toma
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+
+    cliente-lan2:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname cliente-lan2
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+
+    san-felipe:
+      kind: linux
+      image: netoslab-dns:latest
+      exec:
+        - hostname san-felipe
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+
+  links:
+    - endpoints: ["la-toma:eth1", "lan2:eth1"]
+    - endpoints: ["cliente-lan2:eth1", "lan2:eth2"]
+    - endpoints: ["san-felipe:eth1", "lan2:eth3"]
+

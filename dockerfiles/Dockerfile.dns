@@ -1,0 +1,32 @@
+FROM debian:stable-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt update && apt install -y \
+    bind9 \
+    bind9-host \
+    iptables \
+    tcpdump \
+    ethtool \
+    rsyslog \
+    iputils-ping \
+    net-tools \
+    iproute2 \
+    telnet \
+    netcat-traditional \
+    vim \
+    nano \
+    less \
+    openssh-server \
+    openssh-client \
+  && apt clean \
+  && apt -y autoremove \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY resources/named.conf.options /etc/bind/named.conf.options
+
+RUN echo root:netOSLab | chpasswd
+
+WORKDIR /root
+
+CMD ["/bin/bash"]

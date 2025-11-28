@@ -1,0 +1,93 @@
+name: dhcp
+
+topology:
+  nodes:
+    # Definición bridges
+    lan1:
+      kind: bridge
+    lan2:
+      kind: bridge
+    # Definición host merlo
+    merlo:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname merlo
+        - ip link set eth1 down
+        - ip link set eth1 name lan1
+        - ip link set lan1 up
+    # Definición host cliente lan1
+    cliente-lan1:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname cliente-lan1
+        - ip link set eth1 down
+        - ip link set eth1 name lan1
+        - ip link set lan1 up
+    # Definición host la-toma
+    la-toma:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname la-toma
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+    # Definición host cliente lan2
+    cliente-lan2:
+      kind: linux
+      image: netoslab-cliente:latest
+      binds:
+        - /tmp/.X11-unix:/tmp/.X11-unix
+      env:
+        DISPLAY: :0
+      exec:
+        - hostname cliente-lan2
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+    # Definición server san-felipe
+    san-felipe-dhcp:
+      kind: linux
+      image: netoslab-dhcp:latest
+      exec:
+        - hostname san-felipe-dhcp
+        - ip link set eth1 down
+        - ip link set eth1 name lan2
+        - ip link set lan2 up
+    # Definición server potrero
+    potrero-dhcp:
+      kind: linux
+      image: netoslab-dhcp:latest
+      exec:
+        - hostname potrero-dhcp
+        - ip link set eth1 down
+        - ip link set eth1 name lan1
+        - ip link set lan1 up
+        - ip link set eth2 down
+        - ip link set eth2 name lan2
+        - ip link set lan2 up        
+  # Definicion de enlaces
+  links:
+    # Lan1
+    - endpoints: ["merlo:eth1", "lan1:lan1-eth1"]
+    - endpoints: ["cliente-lan1:eth1", "lan1:lan1-eth2"]
+    - endpoints: ["potrero-dhcp:eth1", "lan1:lan1-eth3"]
+    # Lan2
+    - endpoints: ["la-toma:eth1", "lan2:lan2-eth1"]
+    - endpoints: ["cliente-lan2:eth1", "lan2:lan2-eth2"]
+    - endpoints: ["san-felipe-dhcp:eth1", "lan2:lan2-eth3"]
+    - endpoints: ["potrero-dhcp:eth2", "lan2:lan2-eth4"]

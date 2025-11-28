@@ -51,7 +51,7 @@ func DeployLab(labName string, basePath string) (error) {
 	return cmd.Run() 
 }
 // --- Funcion destruir Lab ---
-// DEPLOY Y DESTROY SON FUNCIONES MUY SIMILARES, VER SI SE PUEDE HACER UNA SOLA FUNCION,
+// DEPLOY Y DESTROY SON FUNCIONES MUY SIMILARES, VER SI SE PUEDE HACER UNA SOLA FUNCION 
 //RECIBIENDO LA ORDEN POR PARAMETRO Y USANDO UN CASE/SWITCH PARA ELEGIR LA ACCION.
 func DestroyLab(labName string, basePath string) (error) {
 	fullPath := filepath.Join(basePath, labName)
