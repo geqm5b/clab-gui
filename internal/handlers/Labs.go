@@ -8,58 +8,71 @@ import (
 )
 
 type LabActionRequest struct {
-    Name string `json:"name"`
+	Name string `json:"name"`
 }
 
+const labsPath = "./clab-labs" 
+
+// Handler para que devuelve la lista de labs
 func GetLabsHandler(c *gin.Context) {
-	// path de los laboratorios
-	const labsPath = "./clab-labs"
 	labs, err := service.GetLabs(labsPath)
 	if err != nil {
-		// Devolvemos un error 500 al navegador
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al leer el directorio de labs"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al leer labs"})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{"labs": labs})
 }
 
-func DeployLabHandler(c *gin.Context) {
-	var request LabActionRequest
-	const labsPath = "./clab-labs"
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(400, gin.H{"error": "JSON inválido"})
+// handrler del upload del archivo .drawio 
+func UploadHandler(c *gin.Context) {
+	// Recibir el stream
+	file, header, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se recibió archivo 'file'"})
 		return
 	}
-
-	if err := service.DeployLab(request.Name, labsPath); err != nil {
-        // Si falla, devolvemos un error 500 y el error textual
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo el deploy: " + err.Error()})
-        return
-    }
-
+	defer file.Close()
+	// Lamamos a la funcion 
+	createdLabName, err := service.CreateLabFromStream(file, header.Filename, labsPath)
+	// Menasaje de error
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error procesando el diseño: " + err.Error()})
+		return
+	}
+	// Mensaje de exito
 	c.JSON(http.StatusOK, gin.H{
-        "message": "Desplegando " + request.Name,
-        "status": "ok",
-    })
+		"status":   "success",
+		"message":  "Laboratorio creado correctamente",
+		"lab_name": createdLabName,
+	})
 }
 
-func DestroyLabHandler(c *gin.Context) {
+// Handler para desplegar un lab
+// Falta la creacion de bridges!!
+func DeployLabHandler(c *gin.Context) {
 	var request LabActionRequest
-	const labsPath = "./clab-labs"
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(400, gin.H{"error": "JSON inválido"})
 		return
 	}
+	if err := service.DeployLab(request.Name, labsPath); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo deploy: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Desplegando " + request.Name, "status": "ok"})
+}
 
+// Handler para destruir un lab
+// Falta la eliminacion de bridges!!
+func DestroyLabHandler(c *gin.Context) {
+	var request LabActionRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(400, gin.H{"error": "JSON inválido"})
+		return
+	}
 	if err := service.DestroyLab(request.Name, labsPath); err != nil {
-        // Si falla, devolvemos un error 500 y el error textual
-        c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo al destruir: " + err.Error()})
-        return
-    }
-
-	c.JSON(http.StatusOK, gin.H{
-        "message": "Eliminando " + request.Name,
-        "status": "ok",
-    })
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Fallo destroy: " + err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Eliminando " + request.Name, "status": "ok"})
 }

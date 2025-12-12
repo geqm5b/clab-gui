@@ -1,0 +1,38 @@
+<mxlibrary>[
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"\" kind=\"linux\" image=\"netoslab-dns:latest\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.dns_server;container=1;collapsible=0;recursiveResize=0;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"92.5\" width=\"76.5\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 76.5,
+    "h": 92.5,
+    "aspect": "fixed"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"\" kind=\"linux\" image=\"netoslab-dhcp:latest\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.dhcp_server;container=1;collapsible=0;recursiveResize=0;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"90\" width=\"76\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 76,
+    "h": 90,
+    "aspect": "fixed"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"\" kind=\"linux\" image=\"netoslab-cliente:latest\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.desktop;container=1;collapsible=0;recursiveResize=0;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"98\" width=\"89\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 89,
+    "h": 98,
+    "aspect": "fixed"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"\" kind=\"linux\" image=\"netoslab-cliente:latest\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.printer;container=1;collapsible=0;recursiveResize=0;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"70\" width=\"70\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 70,
+    "h": 70,
+    "aspect": "fixed"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"\" kind=\"bridge\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.switch;container=1;collapsible=0;recursiveResize=0;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"41.5\" width=\"92\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 92,
+    "h": 41.5,
+    "aspect": "fixed"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;object label=\"eth\" ip=\"\" id=\"2\"&gt;&lt;mxCell parent=\"1\" style=\"html=1;rounded=0;absoluteArcSize=1;arcSize=10;whiteSpace=wrap;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"20\" width=\"40\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;object label=\"eth\" ip=\"\" id=\"3\"&gt;&lt;mxCell parent=\"1\" style=\"html=1;rounded=0;absoluteArcSize=1;arcSize=10;whiteSpace=wrap;\" vertex=\"1\"&gt;&lt;mxGeometry height=\"20\" width=\"40\" x=\"120\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/object&gt;&lt;mxCell id=\"4\" edge=\"1\" parent=\"1\" source=\"2\" style=\"html=1;rounded=0;labelBackgroundColor=none;align=left;spacingLeft=5;endArrow=none;endFill=0;\" target=\"3\" value=\"\"&gt;&lt;mxGeometry relative=\"1\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 160,
+    "h": 20,
+    "aspect": "fixed"
+  }
+]</mxlibrary>

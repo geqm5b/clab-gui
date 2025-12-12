@@ -60,20 +60,20 @@ topology:
         - ip link set eth1 name lan2
         - ip link set lan2 up
     # Definición server san-felipe
-    san-felipe-dhcp:
+    san-felipe:
       kind: linux
       image: netoslab-dhcp:latest
       exec:
-        - hostname san-felipe-dhcp
+        - hostname san-felipe
         - ip link set eth1 down
         - ip link set eth1 name lan2
         - ip link set lan2 up
     # Definición server potrero
-    potrero-dhcp:
+    potrero:
       kind: linux
       image: netoslab-dhcp:latest
       exec:
-        - hostname potrero-dhcp
+        - hostname potrero
         - ip link set eth1 down
         - ip link set eth1 name lan1
         - ip link set lan1 up
@@ -85,9 +85,9 @@ topology:
     # Lan1
     - endpoints: ["merlo:eth1", "lan1:lan1-eth1"]
     - endpoints: ["cliente-lan1:eth1", "lan1:lan1-eth2"]
-    - endpoints: ["potrero-dhcp:eth1", "lan1:lan1-eth3"]
+    - endpoints: ["potrero:eth1", "lan1:lan1-eth3"]
     # Lan2
     - endpoints: ["la-toma:eth1", "lan2:lan2-eth1"]
     - endpoints: ["cliente-lan2:eth1", "lan2:lan2-eth2"]
-    - endpoints: ["san-felipe-dhcp:eth1", "lan2:lan2-eth3"]
-    - endpoints: ["potrero-dhcp:eth2", "lan2:lan2-eth4"]
+    - endpoints: ["san-felipe:eth1", "lan2:lan2-eth3"]
+    - endpoints: ["potrero:eth2", "lan2:lan2-eth4"]

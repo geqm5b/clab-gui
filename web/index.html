@@ -3,95 +3,512 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Containerlab Manager</title>
+    <title>NETOSLAB MANAGER</title>
     <style>
-        /* --- ESTILOS GENERALES --- */
+        :root {
+            --bg-dark: #0d1117;
+            --panel-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-green: #238636;
+            --accent-red: #da3633;
+            --accent-blue: #2f81f7;
+            --font-mono: 'Courier New', Courier, monospace;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f6f8;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-mono);
             margin: 0;
-            padding: 20px;
-            color: #333;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #2c3e50;
-        }
-
-        /* --- GRID SYSTEM --- */
-        #lab-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* --- TARJETAS --- */
-        .lab-card {
-            background: white;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* --- LAYOUT PRINCIPAL --- */
+        #sidebar {
+            width: 320px;
+            background-color: var(--panel-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+
+        #main-content {
+            flex-grow: 1;
+            position: relative;
+            background-color: var(--bg-dark);
+            overflow: hidden;
+        }
+
+        /* --- HEADER SIDEBAR --- */
+        .brand {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #58a6ff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .badge {
+            background: #238636;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* --- SECCIONES SIDEBAR --- */
+        .section-box {
+            border: 1px dashed var(--border-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        /* --- CONTROLES --- */
+        .input-fake {
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px;
+            width: 100%;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Input real oculto sobre el fake para capturar el click */
+        #file-upload {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid var(--text-muted);
+            color: var(--text-muted);
+            font-family: var(--font-mono);
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+        .btn-action:hover { background: rgba(255,255,255,0.05); }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            font-family: var(--font-mono);
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+            text-transform: uppercase;
+        }
+        .btn-primary:hover {
+            filter: brightness(1.1);
+        }
+
+        /* --- LOGS --- */
+        .log-container {
+            font-size: 0.8rem;
+            line-height: 1.4;
+            color: var(--text-muted);
+            height: 200px;
+            overflow-y: auto;
+        }
+        .log-line { margin-bottom: 2px; }
+        .log-info { color: #58a6ff; }
+        .log-success { color: #3fb950; }
+        .log-error { color: var(--accent-red); }
+
+        /* --- VISTA: INVENTARIO (LABS) --- */
+        #view-inventory {
+            padding: 30px;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            transition: opacity 0.3s;
+        }
+
+        .view-header {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            display: flex;
             justify-content: space-between;
         }
 
-        .lab-name {
-            font-weight: 700;
-            font-size: 1.2em;
+        .grid-labs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        /* Estilos dinámicos para estado */
+        .card.status-running { border-color: var(--accent-green); }
+        .card.status-error { border-color: var(--accent-red); }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: 20px;
-            word-break: break-word;
-            color: #24292e;
-            text-align: center; 
-        }
-
-        /* --- BOTONES BASE --- */
-        .btn-action {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 6px;
+            font-weight: bold;
             color: white;
-            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        
+        .card-tag {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            align-self: center;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-card {
+            flex: 1;
+            background: transparent;
+            border: 1px solid;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.8rem;
             cursor: pointer;
-            transition: background-color 0.2s;
-            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .btn-deploy { border-color: var(--accent-green); color: var(--accent-green); }
+        .btn-deploy:hover { background: var(--accent-green); color: white; }
+        
+        .btn-destroy { border-color: var(--accent-red); color: var(--accent-red); }
+        .btn-destroy:hover { background: var(--accent-red); color: white; }
+
+        /* --- VISTA: EDITOR (IFRAME) --- */
+        #view-editor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+            z-index: 10;
         }
 
-        .btn-action:disabled {
-            background-color: #959da5 !important;
-            cursor: not-allowed;
-            opacity: 0.8;
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
-
-        /* Botón DEPLOY (Azul) */
-        .btn-deploy {
-            background-color: #0366d6;
-            margin-bottom: 10px; 
+        
+        .empty-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-muted);
+            padding: 20px;
+            border: 1px dashed var(--border-color);
         }
-        .btn-deploy:hover { background-color: #005cc5; }
-
-        /* Botón DESTROY (Rojo) */
-        .btn-destroy {
-            background-color: #dc3545;
-        }
-        .btn-destroy:hover { background-color: #c82333; }
 
     </style>
 </head>
-<body>
+<body onload="initSystem()">
 
-    <h1>Panel Servicios</h1>
+    <!-- BARRA LATERAL (CONTROLES) -->
+    <div id="sidebar">
+        <div class="brand">
+            NETOSLAB MANAGER <span class="badge">optativa</span>
+        </div>
 
-    <div id="lab-grid">
-        <p style="text-align:center; grid-column: 1/-1;">Cargando inventario...</p>
+        <div class="section-box">
+            <div class="section-title">SYSTEM INPUT</div>
+            <div class="input-fake">
+                <span id="file-label">SELECT .XML / .DRAWIO</span>
+                <!-- Input real para funcionalidad -->
+                <input type="file" id="file-upload" onchange="updateFileLabel()">
+            </div>
+            <button class="btn-action" onclick="uploadTopology()">[ INITIALIZE UPLOAD ]</button>
+            
+            <button id="btn-toggle-editor" class="btn-primary" onclick="toggleEditor()">
+                OPEN TOPOLOGY EDITOR
+            </button>
+        </div>
+
+        <div class="section-box" style="flex-grow: 1; display: flex; flex-direction: column;">
+            <div class="section-title">SYSTEM LOG / OUTPUT</div>
+            <div class="log-container" id="sys-log">
+                <!-- Logs dinámicos aquí -->
+            </div>
+        </div>
     </div>
 
-    <script src="/static/app.js"></script>
+    <!-- AREA PRINCIPAL -->
+    <div id="main-content">
+        
+        <!-- VISTA 1: INVENTARIO DE LABS -->
+        <div id="view-inventory">
+            <div class="view-header">
+                <span>INVENTORY / ACTIVE TOPOLOGIES</span>
+                <span style="cursor:pointer; font-size:0.8rem" onclick="fetchInventory()">[ REFRESH ]</span>
+            </div>
+            
+            <div class="grid-labs" id="labs-container">
+                <div class="empty-msg">Connecting to API...</div>
+            </div>
+        </div>
+
+        <!-- VISTA 2: EDITOR (IFRAME) -->
+        <div id="view-editor">
+            <iframe id="drawio-frame" allow="clipboard-read; clipboard-write"></iframe>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        // --- INICIALIZACIÓN ---
+        function initSystem() {
+            logSystem("SYS: System initialized.");
+            fetchInventory();
+        }
+
+        // --- LÓGICA DE API ---
+
+        async function fetchInventory() {
+            logSystem("NET: Fetching inventory from " + API_BASE + "/getLabs...");
+            const container = document.getElementById('labs-container');
+            
+            try {
+                const response = await fetch(`${API_BASE}/getLabs`);
+                if (!response.ok) throw new Error("Status: " + response.status);
+                
+                const data = await response.json();
+                
+                // CRITICAL FIX: Estrictamente siguiendo tu estructura de backend
+                // Tu codigo usa: const labs = data.labs || [];
+                const labsData = data.labs || [];
+
+                console.log("API PARSED LABS:", labsData); // Debug
+
+                renderLabs(labsData);
+
+            } catch (error) {
+                logSystem(`ERR: Fetch failed. ${error.message}`, 'error');
+                container.innerHTML = `<div class="empty-msg" style="color:var(--accent-red)">API Connection Error</div>`;
+            }
+        }
+
+        function renderLabs(labsData) {
+            const container = document.getElementById('labs-container');
+            container.innerHTML = '';
+
+            if (!labsData || labsData.length === 0) {
+                container.innerHTML = '<div class="empty-msg">No labs found (.clab.yml).</div>';
+                return;
+            }
+
+            // Iteramos sobre labsData (Array confirmado)
+            labsData.forEach(lab => {
+                // Manejo de objeto vs string, por si el backend varia un poco
+                const labName = (typeof lab === 'string') ? lab : lab.name;
+                const status = (typeof lab === 'object' && lab.status) ? lab.status : 'stopped';
+                
+                if (!labName) return; 
+
+                // Usamos TU regex para limpiar el nombre
+                const displayName = labName
+                    .replace(/\.(clab\.yml|yml)$/, '')
+                    .toUpperCase();
+
+                const card = document.createElement('div');
+                card.className = `card status-${status}`;
+                card.innerHTML = `
+                    <div class="card-header">
+                        ${displayName}
+                        <span class="card-tag">CLAB</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-card btn-deploy" onclick="triggerAction('deployLab', '${labName}')">DEPLOY</button>
+                        <button class="btn-card btn-destroy" onclick="triggerAction('destroyLab', '${labName}')">DESTROY</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            logSystem(`SYS: Inventory updated. ${labsData.length} items rendered.`);
+        }
+
+        async function triggerAction(endpoint, labName) {
+            logSystem(`CMD: Calling ${endpoint} for ${labName}...`);
+            try {
+                // Mantenemos la estructura de tu codigo original: JSON body {name: ...}
+                const response = await fetch(`${API_BASE}/${endpoint}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: labName })
+                });
+                
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const text = await response.text();
+                // Intentamos parsear por si es JSON para logs bonitos
+                try {
+                    const json = JSON.parse(text);
+                    logSystem(`API: ${json.message || JSON.stringify(json)}`, 'success');
+                } catch(e) {
+                    logSystem(`API: ${text}`, 'success');
+                }
+                
+                // Refrescar inventario tras acción
+                setTimeout(fetchInventory, 2000);
+
+            } catch (error) {
+                logSystem(`ERR: Action failed. ${error.message}`, 'error');
+            }
+        }
+
+        // --- UPLOAD ---
+        function updateFileLabel() {
+            const input = document.getElementById('file-upload');
+            const label = document.getElementById('file-label');
+            if(input.files.length > 0) {
+                label.innerText = input.files[0].name;
+                label.style.color = "#c9d1d9";
+            }
+        }
+
+        async function uploadTopology() {
+            const input = document.getElementById('file-upload');
+            if (input.files.length === 0) {
+                logSystem("SYS: No file selected.", 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            // Confirmado: backend espera campo 'file'
+            formData.append('file', input.files[0]);
+
+            logSystem(`IO: Uploading ${input.files[0].name}...`);
+
+            try {
+                const response = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error(await response.text());
+                
+                logSystem("SYS: Upload successful.", 'success');
+                // Limpiar input
+                input.value = '';
+                document.getElementById('file-label').innerText = "SELECT .XML / .DRAWIO";
+                
+                // Recargar
+                setTimeout(fetchInventory, 1000);
+                
+            } catch (error) {
+                logSystem(`ERR: Upload failed. ${error.message}`, 'error');
+            }
+        }
+
+        // --- EDITOR & UTILIDADES ---
+        const iframe = document.getElementById('drawio-frame');
+        let editorLoaded = false;
+
+        function initEditor() {
+            if (editorLoaded) return;
+            try { localStorage.removeItem('.drawio-config'); } catch (e) {}
+
+            var libUrl = window.location.origin + '/static/mi_libreria.xml';
+            var encodedLib = encodeURIComponent('U' + libUrl); 
+            var offlineFlags = 'gapi=0&db=0&od=0&gh=0&tr=0&analytics=0&picker=0&mode=device&saveAndExit=0';
+            var finalSrc = '/drawio/index.html?' + offlineFlags + '&ui=min&noExitBtn=1&libs=0&clibs=' + encodedLib;
+            
+            iframe.src = finalSrc;
+            editorLoaded = true;
+            logSystem("SYS: Editor module loaded.");
+        }
+
+        function toggleEditor() {
+            const inventoryView = document.getElementById('view-inventory');
+            const editorView = document.getElementById('view-editor');
+            const btn = document.getElementById('btn-toggle-editor');
+
+            if (editorView.style.display === 'none' || editorView.style.display === '') {
+                initEditor();
+                inventoryView.style.display = 'none';
+                editorView.style.display = 'block';
+                btn.innerText = "SHOW ACTIVE LABS";
+                btn.style.backgroundColor = "#238636";
+                logSystem("UI: Switched to Editor.");
+            } else {
+                editorView.style.display = 'none';
+                inventoryView.style.display = 'block';
+                btn.innerText = "OPEN TOPOLOGY EDITOR";
+                btn.style.backgroundColor = ""; 
+                logSystem("UI: Switched to Inventory.");
+                fetchInventory();
+            }
+        }
+
+        function logSystem(msg, type='info') {
+            const logContainer = document.getElementById('sys-log');
+            const time = new Date().toLocaleTimeString('es-ES', {hour12: false});
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            
+            let colorClass = 'log-info';
+            if (type === 'success') colorClass = 'log-success';
+            if (type === 'error') colorClass = 'log-error';
+
+            div.innerHTML = `[${time}] <span class="${colorClass}">${msg}</span>`;
+            logContainer.appendChild(div);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+    </script>
 </body>
 </html>

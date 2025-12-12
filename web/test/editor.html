@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Topología</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #toolbar {
+            background: white;
+            border-bottom: 1px solid #e1e4e8;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .page-title {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin: 0;
+        }
+
+        .filename-input {
+            padding: 10px;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 250px;
+            outline: none;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        .btn-save {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            background-color: #28a745;
+            font-size: 14px;
+        }
+        .btn-save:hover { background-color: #218838; }
+        .btn-save:disabled { background-color: #959da5; cursor: not-allowed; }
+
+        .btn-back {
+            background-color: transparent;
+            color: #586069;
+            border: 1px solid #e1e4e8;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+        .btn-back:hover { background-color: #f6f8fa; }
+
+        .status-indicator {
+            font-size: 12px;
+            color: #666;
+            margin-right: 15px;
+        }
+
+        iframe {
+            flex: 1;
+            border: none;
+            width: 100%;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toolbar">
+        <div style="display: flex; align-items: center;">
+            <button class="btn-back" onclick="window.location.href='/'">← Volver</button>
+            <h1 class="page-title">Diseñador de Topología</h1>
+        </div>
+        
+        <div style="display: flex; align-items: center;">
+            <span id="status" class="status-indicator">Inicializando...</span>
+            <input type="text" id="filename" class="filename-input" placeholder="Nombre (ej: topologia-1)">
+            <button id="btn-save" class="btn-save">💾 Guardar Topología XML</button>
+        </div>
+    </div>
+
+    <!-- iframe contenedor del editor -->
+    <iframe 
+        id="drawio-frame"
+        src=""
+        style="width:100%;height:100%;border:0;">
+    </iframe>
+
+    <script src="/static/editor.js"></script>
+
+    <script>
+        (function() {
+            var iframe = document.getElementById('drawio-frame');
+            var statusSpan = document.getElementById('status');
+            
+            // --- LIMPIEZA DE SESIÓN ---
+            try {
+                localStorage.removeItem('.drawio-config');
+                Object.keys(localStorage).forEach(function(key) {
+                    if (key.startsWith('.drawio') || key.startsWith('mx')) {
+                        localStorage.removeItem(key);
+                    }
+                });
+            } catch (e) { console.warn('Limpieza omitida', e); }
+
+            // 1. Configuración de Carga (TIER 7 - Funcional)
+            // Usamos la URL simple sin parámetros extraños para asegurar que clibs la entienda.
+            // Nota: Quitamos el 'v=...' visual de la URL porque lo arreglaremos vía JS.
+            var libUrl = window.location.origin + '/static/mi_libreria.xml';
+            
+            // Nombre "Objetivo" que queremos ver en la UI
+            var targetName = 'Netos Lab';
+            
+            var encodedLib = encodeURIComponent('U' + libUrl); 
+            var offlineFlags = 'gapi=0&db=0&od=0&gh=0&tr=0&analytics=0&picker=0&mode=device';
+            var finalSrc = '/drawio/index.html?' + offlineFlags + '&ui=min&noExitBtn=1&libs=0&clibs=' + encodedLib;
+            
+            console.log('Tier 8 Init: URL de Carga ->', finalSrc);
+            
+            setTimeout(function() {
+                iframe.src = finalSrc;
+            }, 100);
+
+            // 2. Cirugía Cosmética DOM (TIER 8 - Estético)
+            // Como estamos en el mismo dominio (Same Origin), podemos manipular el HTML interno del iframe.
+            iframe.onload = function() {
+                statusSpan.textContent = "Editor cargado. Aplicando estilos...";
+                
+                // Iniciamos un intervalo que buscará y destruirá el "nombre feo" periódicamente
+                // Esto es necesario porque draw.io renderiza la barra lateral dinámicamente.
+                var cosmeticSurgeon = setInterval(function() {
+                    try {
+                        // Accedemos al documento interno del iframe
+                        var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (!innerDoc) return;
+
+                        // Buscamos elementos que contengan el nombre del archivo
+                        // La clase 'geTitle' suele ser el título del acordeón en la barra lateral
+                        var titles = innerDoc.querySelectorAll('.geTitle');
+                        var replaced = false;
+
+                        titles.forEach(function(el) {
+                            // Si encontramos el nombre feo (o parte de él)
+                            if (el.textContent.indexOf('mi_libreria.xml') !== -1) {
+                                console.log('Tier 8: Nombre feo detectado. Reemplazando...');
+                                el.textContent = targetName; // ¡Cambio cosmético!
+                                el.title = targetName;       // Tooltip
+                                replaced = true;
+                            }
+                        });
+
+                        // Estrategia de respaldo: TreeWalker (Búsqueda profunda de texto)
+                        // Por si el elemento no tiene la clase .geTitle
+                        if (!replaced) {
+                            var walker = innerDoc.createTreeWalker(innerDoc.body, NodeFilter.SHOW_TEXT, null, false);
+                            var node;
+                            while(node = walker.nextNode()) {
+                                if (node.nodeValue && node.nodeValue.indexOf('mi_libreria.xml') !== -1) {
+                                    node.nodeValue = targetName;
+                                    replaced = true;
+                                }
+                            }
+                        }
+
+                        if (replaced) {
+                            statusSpan.textContent = "Librería: " + targetName;
+                            // No limpiamos el intervalo inmediatamente por si el usuario recarga librerías,
+                            // pero bajamos la frecuencia.
+                        }
+
+                    } catch (e) {
+                        // Si falla por permisos (Cross-Origin) o si el DOM no está listo aún
+                        // console.warn("Esperando acceso al DOM...", e);
+                    }
+                }, 1000); // Revisar cada segundo
+
+                // Detener la cirugía a los 30 segundos para ahorrar recursos
+                setTimeout(function() { clearInterval(cosmeticSurgeon); }, 30000);
+            };
+        })();
+    </script>
+</body>
+</html>
