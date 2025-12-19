@@ -238,6 +238,8 @@ func ConvertDrawioToYaml(r io.Reader, labName string) ([]byte, error) {
 			lab.Topology.Links = append(lab.Topology.Links, edge{
 				Endpoints: []string{ep1, ep2},
 			})
+			//LIMPIAR ESOS DOS IFS, NO ES NECESARIO REVISAR ACA SI ES BRIDGE O N, EL FORMATTER LO HACE, 
+			// SOLO HAY QUE REVISAR SI ES UN NODO LINUX PARA APLICARLE IP Y CONFIGS SI ES NECESAIO
 
 			// registrar conexion de linux a bridge
 			if src.Kind == "linux" && tgt.Kind == "bridge" {
