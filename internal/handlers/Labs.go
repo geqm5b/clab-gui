@@ -32,7 +32,7 @@ func UploadHandler(c *gin.Context) {
 		return
 	}
 	defer file.Close()
-	// Lamamos a la funcion 
+	// Llamamos a la funcion 
 	createdLabName, err := service.CreateLabFromStream(file, header.Filename, labsPath)
 	// Menasaje de error
 	if err != nil {
@@ -63,7 +63,6 @@ func DeployLabHandler(c *gin.Context) {
 }
 
 // Handler para destruir un lab
-// Falta la eliminacion de bridges!!
 func DestroyLabHandler(c *gin.Context) {
 	var request LabActionRequest
 	if err := c.ShouldBindJSON(&request); err != nil {

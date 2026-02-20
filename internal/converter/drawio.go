@@ -78,6 +78,7 @@ type defaultConfig struct {
 
 // Helper para navegar al root sin repetir código
 func getRootElement(doc *etree.Document) *etree.Element {
+	//modo mas eficiente.. cambiar y testear a futuro. revisar si se puede returnear directamente sin problemas o hay que revisar por errores antes de retorarlo
 	//root := doc.FindElement("/mxfile/diagram/mxGraphModel/root")
 	mxfile := doc.SelectElement("mxfile")
 	if mxfile == nil {
@@ -242,15 +243,15 @@ func ConvertDrawioToYaml(r io.Reader, labName string) ([]byte, error) {
 			// SOLO HAY QUE REVISAR SI ES UN NODO LINUX PARA APLICARLE IP Y CONFIGS SI ES NECESAIO
 
 			// registrar conexion de linux a bridge
-			if src.Kind == "linux" && tgt.Kind == "bridge" {
-				key := fmt.Sprintf("%s:%s", src.NodeName, src.IfaceName)
-				bridgeConnectionMap[key] = tgt.NodeName
-			}
+			//if src.Kind == "linux" && tgt.Kind == "bridge" {
+			//	key := fmt.Sprintf("%s:%s", src.NodeName, src.IfaceName)
+			//	bridgeConnectionMap[key] = tgt.NodeName
+			//}
 			// registrar conexion de bridge a linux
-			if tgt.Kind == "linux" && src.Kind == "bridge" {
-				key := fmt.Sprintf("%s:%s", tgt.NodeName, tgt.IfaceName)
-				bridgeConnectionMap[key] = src.NodeName
-			}
+			//if tgt.Kind == "linux" && src.Kind == "bridge" {
+			//	key := fmt.Sprintf("%s:%s", tgt.NodeName, tgt.IfaceName)
+			//	bridgeConnectionMap[key] = src.NodeName
+			//}
 		}
 	}
 
